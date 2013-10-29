@@ -104,16 +104,32 @@ TEST(FastBitVectorTest, RandomSelect) {
 
 TEST(FastBitVectorTest, RandomRankSelect) {
   std::mt19937_64 mt(0);
+  const int rarity = 1<<10;
   int n = 1<<20;
   int m = n / 4;
   std::vector<bool> v;
   for (int j = 0; j < n; ++j) {
-    v.push_back(mt()%2);
+    v.push_back(mt()%rarity == 0);
   }
   FastBitVector vec(v);
-  for (int j = 1; j < m; ++j) {
+  for (int j = 1; j <= vec.count(1); ++j) {
     int b = mt() % 2;
     int p = vec.select(j, b);
     ASSERT_EQ(vec.rank(p, b), j);
+  }
+}
+
+TEST(FastBitVectorTest, Edges) {
+  int n = 1<<16;
+  std::vector<bool> v(n, true);
+  FastBitVector vec(v);
+  // This works even without zeros.
+  ASSERT_EQ(0, vec.select(0, 0)); 
+  // especially 0 == vec.rank(0,1)
+  // and vec.rank(n,1) = n
+  for (int j = 0; j <= n; ++j) {
+    ASSERT_EQ(j, vec.rank(j,1)) << j;
+    ASSERT_EQ(0, vec.rank(j,0)) << j;
+    ASSERT_EQ(j, vec.select(j,1)) << j;
   }
 }

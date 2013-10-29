@@ -79,12 +79,13 @@ void Select(int iters) {
 
 void SelectSparse(int iters) {
   const size_t size = 1<<25;
+  const unsigned int rarity = 1<<10;
   std::cout << "Select sparse:\n";
   using namespace std::chrono;
   std::mt19937_64 mt(time(0));
   std::vector<bool> v;
   for (size_t j = 0; j < size; ++j) {
-    v.push_back(mt()%1024 == 0);
+    v.push_back(mt()%rarity == 0);
   }
   FastBitVector vec(v);
   std::chrono::high_resolution_clock clock;
@@ -93,7 +94,7 @@ void SelectSparse(int iters) {
   for (int j = 0; j < iters; ++j) {
     bool b = 1;
     total = total * 178923 + 987341;
-    total += vec.select(total % (size / 2024), b);
+    total += vec.select(total % (size / (2*rarity)), b);
   }
   std::cout << "total = " << total << endl;
   auto end = clock.now();
@@ -123,9 +124,9 @@ void Construct() {
 
 
 int main() {
-  Rank(1000000);
-  Select(1000000);
-  RankSparse(1000000);
-  SelectSparse(1000000);
+  Rank(10000000);
+  Select(10000000);
+  RankSparse(10000000);
+  SelectSparse(10000000);
   Construct();
 }
