@@ -58,7 +58,7 @@ FastBitVector
 BalancedWaveletTree
 -------------------
 - Implement select for completeness.
-- Function for listing all values <=m
+- Method to iterate all positions i with wt[i] <= value.
 
 SkewedWaveletTree
 -------------------
