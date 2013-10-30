@@ -1,13 +1,6 @@
-Wavelet trees
-===========================
-
-This is an implementation of balanced and skewed wavelet trees. At the moment
-only rank and rankLE are supported for the trees.
-
-
 FastBitVector
 ====================
-This is an implementation of simple bitvector from paper
+This is an implementation of a simple bitvector from paper
 "Fast, Small, Simple Rank/Select on Bitmaps" by Navarro and Providel.
 Uses about 3% extra space for support structures.
 FastBitVector Operations
@@ -18,6 +11,8 @@ FastBitVector Operations
   * Returns smallest i with rank(i, bit) == rank
 
 
+Wavelet trees
+===========================
 Wavelet Operations
 -----------------
 - \*Wavelet::rank(size_t pos, intmax_t value)
@@ -45,6 +40,7 @@ On my computer (i7 2600k 4.5ghz) with popcount instruction
 - FastBitVector::select < 75ns
 - BalancedWaveletTree::rankLE < 1000ns
 - SkewedWaveletTree::rankLE < 170ns with skewed input.
+See fast-bit-vector_benchmark.cpp and wavelet_benchmark.cpp.
 
 TODO
 =================
