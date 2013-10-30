@@ -1,7 +1,7 @@
 #include<gtest/gtest.h>
 
 #include <random>
-#include "fastbitvector.h"
+#include "fast-bit-vector.h"
 
 TEST(FastBitVectorTest, Index) {
   std::vector<bool> v = {false, true, true, false, true};

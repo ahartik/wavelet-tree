@@ -1,4 +1,4 @@
-#include "fastbitvector.h"
+#include "fast-bit-vector.h"
 #include <iostream>
 #include <random>
 #include <chrono>

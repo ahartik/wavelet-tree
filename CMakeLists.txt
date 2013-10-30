@@ -8,14 +8,26 @@ ADD_DEFINITIONS(
       -g
        )
 
-add_executable(fastbitvector_test fastbitvector_test.cpp fastbitvector.cpp)
-target_link_libraries(fastbitvector_test
+add_executable(fast-bit-vector_test fast-bit-vector_test.cpp fast-bit-vector.cpp)
+target_link_libraries(fast-bit-vector_test
   libgtest.a
   libgtest_main.a
   pthread
   )
-add_custom_command(TARGET fastbitvector_test POST_BUILD
-    COMMAND fastbitvector_test || true)
+add_custom_command(TARGET fast-bit-vector_test POST_BUILD
+    COMMAND fast-bit-vector_test || true)
 
-add_executable(fastbitvector_benchmark fastbitvector_benchmark.cpp fastbitvector.cpp)
-set_target_properties(fastbitvector_benchmark PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG")
+add_executable(fast-bit-vector_benchmark fast-bit-vector_benchmark.cpp fast-bit-vector.cpp)
+set_target_properties(fast-bit-vector_benchmark PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG")
+
+add_executable(wavelet_test wavelet_test.cpp fast-bit-vector.cpp)
+target_link_libraries(wavelet_test
+  libgtest.a
+  libgtest_main.a
+  pthread
+  )
+add_custom_command(TARGET wavelet_test POST_BUILD
+    COMMAND wavelet_test || true)
+
+add_executable(wavelet_benchmark wavelet_benchmark.cpp fast-bit-vector.cpp)
+set_target_properties(wavelet_benchmark PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG")
