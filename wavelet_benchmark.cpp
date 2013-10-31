@@ -29,7 +29,6 @@ void SkewedRankLE(int iters, int m) {
   std::cout << "(" << total << ")\n";
   
   auto end = clock.now();
-  long ms = duration_cast<std::chrono::milliseconds>(end-start).count();
   std::cout << duration_cast<nanoseconds>(end-start).count()/iters << "ns/rank\n";
 }
 
@@ -40,11 +39,11 @@ void BalancedRankLE(int iters, int m) {
   using namespace std::chrono;
   std::mt19937_64 mt(0);
   std::binomial_distribution<int> gen(max, 4.0/max);
-  std::vector<int> v;
+  BalancedWaveletEncoder enc(31);
   for (size_t j = 0; j < size; ++j) {
-    v.push_back(gen(mt));
+    enc.append(gen(mt));
   }
-  BalancedWavelet wt(v.begin(), v.end(), 31);
+  BalancedWavelet wt(std::move(enc));
   std::chrono::high_resolution_clock clock;
   auto start = clock.now();
   unsigned long long total = 0;
@@ -55,7 +54,6 @@ void BalancedRankLE(int iters, int m) {
   // Make sure compiler is not too smart.
   std::cout << "(" << total << ")\n";
   auto end = clock.now();
-  long ms = duration_cast<std::chrono::milliseconds>(end-start).count();
   std::cout << duration_cast<nanoseconds>(end-start).count()/iters << "ns/rank\n";
 }
 

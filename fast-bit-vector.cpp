@@ -43,7 +43,7 @@ int WordSelect(unsigned long v, int r) {
 }
 
 static const int WordBits = 8 * sizeof(long);
-static const int RankSample = 1024 * 2;
+static const int RankSample = 2048;
 static const int SelectSample = 8192 * 4;
 
 FastBitVector::FastBitVector(const std::vector<bool>& data) {
@@ -187,7 +187,7 @@ size_t FastBitVector::extra_bits() const {
   size_t r = 1 + popcount_ / SelectSample;
   r += 2 + (size_ - popcount_) / SelectSample;
   r += 2 + size_ / RankSample;
-  return r * WordBits;
+  return r * WordBits + sizeof(FastBitVector) * 8;
 }
 
 FastBitVector::~FastBitVector() {

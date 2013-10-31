@@ -15,6 +15,20 @@ using std::size_t;
 // Returns: First index i so that r == rank(v,i)
 int WordSelect(unsigned long v, int r);
 
+// Plain bit-vector.
+// Supports appending: use to construct FastBitVector
+
+class PlainBitVector {
+  static const int WordBits = 8 * sizeof(long);
+  friend class FastBitVector;
+  public:
+  void push_back(bool b);
+  private:
+  size_t size_;
+  size_t cap_;
+
+};
+
 class FastBitVector {
   static const int WordBits = 8 * sizeof(long);
  public:

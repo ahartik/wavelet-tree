@@ -5,6 +5,7 @@ project(sdsl CXX C)
 ADD_DEFINITIONS(
       -std=c++0x # Or -std=c++0x
       -march=native
+      -Wall
       -g
        )
 
