@@ -117,6 +117,7 @@ FastBitVector::FastBitVector(FastBitVector&& other)
 
 const FastBitVector& FastBitVector::operator=(FastBitVector&& other) {
   swap(*this, other);
+  return *this;
 }
 
 // Number of positions < pos set with bit_value.

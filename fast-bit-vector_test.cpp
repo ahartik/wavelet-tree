@@ -106,13 +106,12 @@ TEST(FastBitVectorTest, RandomRankSelect) {
   std::mt19937_64 mt(0);
   const int rarity = 1<<10;
   int n = 1<<20;
-  int m = n / 4;
   std::vector<bool> v;
   for (int j = 0; j < n; ++j) {
     v.push_back(mt()%rarity == 0);
   }
   FastBitVector vec(v);
-  for (int j = 1; j <= vec.count(1); ++j) {
+  for (size_t j = 1; j <= vec.count(1); ++j) {
     int b = mt() % 2;
     int p = vec.select(j, b);
     ASSERT_EQ(vec.rank(p, b), j);
