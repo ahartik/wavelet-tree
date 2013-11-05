@@ -26,7 +26,7 @@ class BalancedWaveletEncoder {
 
   template <typename It>
   BalancedWaveletEncoder(It begin, It end) {
-    intmax_t max = 0;
+    int64_t max = 0;
     for (It it = begin; it != end; ++it) {
       if (*it > max) {
         max = *it;
@@ -40,7 +40,7 @@ class BalancedWaveletEncoder {
 
   explicit BalancedWaveletEncoder(int b) : bits(b) { }
 
-  void append(intmax_t value) {
+  void append(int64_t value) {
     assert (value < (1LL<<bits));
     ConstructNode* add = &croot;
     int j = 0;
@@ -130,7 +130,7 @@ class BalancedWavelet {
           vec(&wt.tree_)
     {}
 
-    intmax_t splitValue() const {
+    int64_t splitValue() const {
       return high_bits + (1LL << bit);
     }
 
@@ -174,7 +174,7 @@ class BalancedWavelet {
       begin_rank = vec->rank(offset, 1);
       end_rank = vec->rank(offset + len, 1) - begin_rank;
     }
-    intmax_t high_bits;
+    int64_t high_bits;
     size_t len;
     size_t offset;
     size_t bit;
@@ -214,7 +214,7 @@ class BalancedWavelet {
     return pos + ret;
   }
 
-  intmax_t operator[](size_t i) const {
+  int64_t operator[](size_t i) const {
     Iterator it(*this);
     while (!it.isLeaf()) {
       bool b = it[i];

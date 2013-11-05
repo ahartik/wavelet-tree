@@ -42,10 +42,6 @@ int WordSelect(unsigned long v, int r) {
   return -1;
 }
 
-static const int WordBits = 8 * sizeof(long);
-static const int RankSample = 1024;
-static const int SelectSample = 8192 * 4;
-
 FastBitVector::FastBitVector() {
   size_ = 0;
   bits_ = nullptr;
@@ -73,7 +69,7 @@ FastBitVector::FastBitVector(const std::vector<bool>& data) {
   rank_samples_[0] = 0;
   size_t sum = 0;
   for (size_t i = 0; i < size_/RankSample; i++) {
-    for (int j = 0; j < RankSample; ++j) {
+    for (size_t j = 0; j < RankSample; ++j) {
       size_t idx = i * RankSample + j;
       sum += data[idx];
     }
@@ -120,8 +116,10 @@ const FastBitVector& FastBitVector::operator=(FastBitVector&& other) {
   return *this;
 }
 
+#if 0
 // Number of positions < pos set with bit_value.
 size_t FastBitVector::rank(size_t pos, bool bit_value) const {
+  rank_count++;
   assert(pos <= size_);
   size_t block = pos / RankSample;
   size_t sum = rank_samples_[block];
@@ -139,6 +137,7 @@ size_t FastBitVector::rank(size_t pos, bool bit_value) const {
   if (bit_value == 0) return pos - sum;
   return sum;
 }
+#endif
 
 // Returns smallest position pos so that rank(pos,bit) == idx
 size_t FastBitVector::select(size_t idx, bool bit) const {

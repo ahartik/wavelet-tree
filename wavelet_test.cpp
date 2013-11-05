@@ -7,17 +7,7 @@
 #include <vector>
 using namespace std;
 
-TEST(BalancedWaveletTest, Rank) {
-  vector<int> v = {4,2,3,1,2,3,4,5};
-  BalancedWavelet wt(v.begin(), v.end(), 3);
-  EXPECT_EQ(0, wt.rank(0, 4));
-  EXPECT_EQ(0, wt.rank(2, 5));
-
-  EXPECT_EQ(1, wt.rank(1, 4));
-  EXPECT_EQ(1, wt.rank(2, 2));
-  EXPECT_EQ(2, wt.rank(5, 2));
-}
-
+// TODO implement these in all Wavelet trees.
 TEST(BalancedWaveletTest, Select) {
   vector<int> v = {4,2,3,1,2,3,4,5};
   BalancedWavelet wt(v.begin(), v.end(), 3);
@@ -27,45 +17,13 @@ TEST(BalancedWaveletTest, Select) {
   EXPECT_EQ(4, wt.select(1, 1));
   EXPECT_EQ(5, wt.select(2, 2));
 }
+
 TEST(BalancedWaveletTest, Indexing) {
   vector<int> v = {4,2,3,1,2,3,4,5,0};
   BalancedWavelet wt(v.begin(), v.end(), 3);
   for (size_t i = 0; i < v.size(); ++i) {
     EXPECT_EQ(v[i], wt[i]) << " i = " << i;
   }
-}
-
-TEST(BalancedWaveletTest, RankLE) {
-  vector<int> v = {4,2,3,1,2,3,4,5};
-  BalancedWavelet wt(v.begin(), v.end(), 3);
-  EXPECT_EQ(0, wt.rankLE(0, 4));
-  EXPECT_EQ(2, wt.rankLE(2, 5));
-
-  EXPECT_EQ(2, wt.rankLE(3, 3));
-  EXPECT_EQ(3, wt.rankLE(5, 2));
-  EXPECT_EQ(v.size(), wt.rankLE(v.size(), 7));
-}
-
-TEST(SkewedWaveletTest, Rank) {
-  vector<int> v = {4,2,3,1,2,3,4,5};
-  SkewedWavelet wt(v.begin(), v.end());
-  EXPECT_EQ(0, wt.rank(0, 4));
-  EXPECT_EQ(0, wt.rank(2, 5));
-
-  EXPECT_EQ(1, wt.rank(1, 4));
-  EXPECT_EQ(1, wt.rank(2, 2));
-  EXPECT_EQ(2, wt.rank(5, 2));
-}
-
-TEST(SkewedWaveletTest, RankLE) {
-  vector<int> v = {4,2,3,1,2,3,4,5};
-  SkewedWavelet wt(v.begin(), v.end());
-  EXPECT_EQ(0, wt.rankLE(0, 4));
-  EXPECT_EQ(2, wt.rankLE(2, 5));
-
-  EXPECT_EQ(2, wt.rankLE(3, 3));
-  EXPECT_EQ(3, wt.rankLE(5, 2));
-  EXPECT_EQ(v.size(), wt.rankLE(v.size(), 7));
 }
 
 template<typename T>
