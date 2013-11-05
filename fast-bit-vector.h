@@ -32,9 +32,12 @@ class PlainBitVector {
 class FastBitVector {
   static const int WordBits = 8 * sizeof(long);
  public:
-  FastBitVector(const std::vector<bool>& data);
+  // Empty constructor.
+  FastBitVector();
+  explicit FastBitVector(const std::vector<bool>& data);
   FastBitVector(const FastBitVector& other) = delete;
   FastBitVector(FastBitVector&& other);
+  const FastBitVector& operator=(FastBitVector&& other);
 
   bool operator[](size_t pos) const {
     size_t i = pos / WordBits;

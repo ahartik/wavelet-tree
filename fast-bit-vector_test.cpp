@@ -6,7 +6,7 @@
 TEST(FastBitVectorTest, Index) {
   std::vector<bool> v = {false, true, true, false, true};
   FastBitVector vec(v);
-  for (int i = 0; i < v.size(); ++i) {
+  for (size_t i = 0; i < v.size(); ++i) {
     EXPECT_EQ(int(vec[i]), int(v[i]));
   }
 }

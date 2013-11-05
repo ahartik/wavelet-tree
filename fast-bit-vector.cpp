@@ -43,8 +43,16 @@ int WordSelect(unsigned long v, int r) {
 }
 
 static const int WordBits = 8 * sizeof(long);
-static const int RankSample = 2048;
+static const int RankSample = 1024;
 static const int SelectSample = 8192 * 4;
+
+FastBitVector::FastBitVector() {
+  size_ = 0;
+  bits_ = nullptr;
+  rank_samples_ = nullptr;
+  select_samples_[0] = nullptr;
+  select_samples_[1] = nullptr;
+}
 
 FastBitVector::FastBitVector(const std::vector<bool>& data) {
   size_ = data.size();
@@ -59,6 +67,7 @@ FastBitVector::FastBitVector(const std::vector<bool>& data) {
     long o = i % WordBits;
     bits_[p] |= long(data[i]) << o;
   }
+
   // Init rank samples.
   rank_samples_ = new size_t[1 + size_ / RankSample];
   rank_samples_[0] = 0;
@@ -106,6 +115,10 @@ FastBitVector::FastBitVector(FastBitVector&& other)
   swap(*this, other);
 }
 
+const FastBitVector& FastBitVector::operator=(FastBitVector&& other) {
+  swap(*this, other);
+}
+
 // Number of positions < pos set with bit_value.
 size_t FastBitVector::rank(size_t pos, bool bit_value) const {
   assert(pos <= size_);
@@ -118,9 +131,9 @@ size_t FastBitVector::rank(size_t pos, bool bit_value) const {
        ++word) {
     sum += __builtin_popcountll(bits_[word]);
   }
-  long first_bits = pos - word * WordBits;
+  size_t first_bits = pos - word * WordBits;
   // Add first bits from the last word.
-  unsigned long mask = (1LL<<first_bits) - 1LL;
+  unsigned long mask = (1LL << first_bits) - 1LL;
   sum += __builtin_popcountll(bits_[word] & mask);
   if (bit_value == 0) return pos - sum;
   return sum;
@@ -129,7 +142,7 @@ size_t FastBitVector::rank(size_t pos, bool bit_value) const {
 // Returns smallest position pos so that rank(pos,bit) == idx
 size_t FastBitVector::select(size_t idx, bool bit) const {
   assert(idx <= count(bit));
-  // flip this to operate without select samples.
+  // set to 0 for pure binary search on blocks.
 #if 1
   // Start from sampling.
   size_t block = idx / SelectSample;

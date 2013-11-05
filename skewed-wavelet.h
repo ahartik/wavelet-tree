@@ -35,6 +35,11 @@ class SkewedWavelet {
     }
   }
 
+  SkewedWavelet(SkewedWavelet&& o)
+    : wt_(std::move(o.wt_)),
+      wt_pick_(std::move(o.wt_pick_)) {
+  }
+
   size_t rank(size_t pos, int64_t value) const {
     int64_t fixed = 0;
     int lvl = Level(value, &fixed);
@@ -85,8 +90,9 @@ class SkewedWavelet {
     *fix = 0;
     return 0;
   }
-  std::vector<FastBitVector> wt_pick_;
+
   std::vector<BalancedWavelet> wt_;
+  std::vector<FastBitVector> wt_pick_;
 };
 
 #endif
