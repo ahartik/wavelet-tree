@@ -36,6 +36,22 @@ class SparseBitVector {
     return *this;
   }
 
+  bool operator[](size_t pos) const {
+    uint64_t mask = (1LL << w_) - 1;
+    size_t high = pos >> w_;
+    size_t low = pos & mask;
+    size_t y = high_bits_.select(high, 0);
+    size_t x = y - high;
+    for (;high_bits_[y] == 1; x++, y++) {
+      size_t l = this->low(x);
+      if (l >= low) {
+        if (l == low) return 1;
+        return 0;
+      }
+    }
+    return 0;
+  }
+
   size_t rank(size_t pos, bool bit) const {
     if (pos == 0) return 0;
     uint64_t mask = (1LL << w_) - 1;

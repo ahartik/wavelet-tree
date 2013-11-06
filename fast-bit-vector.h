@@ -55,7 +55,7 @@ class PlainBitVector {
 };
 
 class FastBitVector {
-  static const unsigned RankSample = 1024;
+  static const unsigned RankSample = 2048;
   static const unsigned SelectSample = 8 * 1024;
   static const unsigned WordBits = 8 * sizeof(long);
  public:
@@ -71,6 +71,7 @@ class FastBitVector {
     int offset = pos % WordBits;
     return (bits_[i] >> offset) & 1;
   }
+
   // Number of positions < pos set with bit_value.
   size_t rank(size_t pos, bool bit_value) const {
     size_t block = pos / RankSample;
@@ -89,6 +90,7 @@ class FastBitVector {
     if (bit_value == 0) return pos - sum;
     return sum;
   }
+
   // Returns smallest position pos so that rank(pos,bit) == idx
   size_t select(size_t idx, bool bit) const {
     assert(idx <= count(bit));

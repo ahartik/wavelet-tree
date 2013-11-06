@@ -9,15 +9,6 @@ ADD_DEFINITIONS(
       -Wall
        )
 
-add_executable(fast-bit-vector_test fast-bit-vector_test.cpp fast-bit-vector.cpp)
-target_link_libraries(fast-bit-vector_test
-  libgtest.a
-  libgtest_main.a
-  pthread
-  )
-add_custom_command(TARGET fast-bit-vector_test POST_BUILD
-    COMMAND fast-bit-vector_test || true)
-
 add_executable(bit-vector_test bit-vector_test.cpp fast-bit-vector.cpp)
 target_link_libraries(bit-vector_test
   libgtest.a

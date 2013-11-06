@@ -36,7 +36,6 @@ TYPED_TEST(BitVectorTest, RandomRank) {
     v.push_back(mt()%128 == 0);
   }
   TypeParam vec(v);
-  std::cout << "bitSize = " << vec.bitSize() << "\n";
   int rank = 0;
   for (int j = 0; j < m; ++j) {
     ASSERT_EQ(rank, vec.rank(j, 1)) << " j = " << j;
@@ -71,5 +70,31 @@ TYPED_TEST(BitVectorTest, RandomSelect) {
     int b = v[j];
     rank[b]++;
     ASSERT_EQ(j+1, vec.select(rank[b],b)) << j;
+  }
+}
+
+TYPED_TEST(BitVectorTest, Index) {
+  std::vector<bool> v(128);
+  for (int i = 0; i < v.size(); ++i) {
+    v[i] = i % 17 == 0;
+  }
+  TypeParam vec(v);
+  for (size_t i = 0; i < v.size(); ++i) {
+    EXPECT_EQ(int(v[i]), int(vec[i]));
+  }
+}
+
+TYPED_TEST(BitVectorTest, Edges) {
+  int n = 1<<16;
+  std::vector<bool> v(n, true);
+  TypeParam vec(v);
+  // This works even without zeros.
+  ASSERT_EQ(0, vec.select(0, 0)); 
+  // especially 0 == vec.rank(0,1)
+  // and vec.rank(n,1) = n
+  for (int j = 0; j <= n; ++j) {
+    ASSERT_EQ(j, vec.rank(j,1)) << j;
+    ASSERT_EQ(0, vec.rank(j,0)) << j;
+    ASSERT_EQ(j, vec.select(j,1)) << j;
   }
 }

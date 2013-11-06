@@ -116,7 +116,7 @@ class RLEWavelet {
     size_t total = head_.bitSize();
     total += run_end_.bitSize();
     total += run_len_.bitSize();
-    total += num_rank_.size() * sizeof(size_t) * 8;
+    total += num_rank_.size() * sizeof(size_t) * 8 * 2;
     std::cout << "num_rank.size() = " << num_rank_.size() << "\n";
     return total;
   }
