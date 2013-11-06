@@ -34,7 +34,9 @@ class WaveletTest : public ::testing::Test {
 typedef ::testing::Types<
   BalancedWavelet,
   SkewedWavelet,
-  RLEWavelet> WaveletTypes;
+  RLEWavelet<BalancedWavelet>,
+  RLEWavelet<SkewedWavelet>
+  > WaveletTypes;
 
 TYPED_TEST_CASE(WaveletTest, WaveletTypes );
 TYPED_TEST(WaveletTest, Rank) {

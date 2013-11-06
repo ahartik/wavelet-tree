@@ -7,6 +7,7 @@
 #include "sparse-bit-vector.h"
 #include "skewed-wavelet.h"
 
+template<typename Wavelet = BalancedWavelet>
 class RLEWavelet {
  public:
   template<typename It>
@@ -56,7 +57,7 @@ class RLEWavelet {
       run[i] = std::vector<size_t>();
     }
     assert(run_lens.size() == head.size());
-    head_ = BalancedWavelet(head.begin(), head.end());
+    head_ = Wavelet(head.begin(), head.end());
     run_len_ = SparseBitVector(run_lens.begin(), run_lens.end());
     assert(run_lens.size() == run_len_.count(1));
   }
@@ -64,7 +65,7 @@ class RLEWavelet {
   size_t rank(size_t pos, uint64_t value) const {
     if (pos == 0) return 0;
     size_t rpos = headPos(pos);
-    BalancedWavelet::Iterator it(head_);
+    typename Wavelet::Iterator it(head_);
     bool eq = true;
     size_t hrank = rpos;
     for (;;) {
@@ -87,7 +88,7 @@ class RLEWavelet {
   }
 
   size_t rankLE(size_t pos, uint64_t value) const {
-    BalancedWavelet::Iterator it(head_);
+    typename Wavelet::Iterator it(head_);
     if (pos == 0) return 0;
     size_t rpos = headPos(pos);
     bool lt = true;
@@ -133,7 +134,7 @@ class RLEWavelet {
 
   // Internal recursive function for rankLE traversal.
   // *lt is set to false if head_[pos] > value.
-  size_t rankLE(BalancedWavelet::Iterator it, size_t pos, uint64_t value, bool* lt) const {
+  size_t rankLE(typename Wavelet::Iterator it, size_t pos, uint64_t value, bool* lt) const {
     if (it.count() == 0) return 0;
     size_t pos1 = it.rank(pos, 1);
     size_t pos0 = pos - pos1;
@@ -174,6 +175,6 @@ class RLEWavelet {
   SparseBitVector run_end_;
   SparseBitVector run_len_;
   std::vector<size_t> num_rank_;
-  BalancedWavelet head_;
+  Wavelet head_;
 };
 #endif

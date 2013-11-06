@@ -129,6 +129,21 @@ class BalancedWavelet {
           level_skip(wt.size_),
           vec(&wt.tree_)
     {}
+    // Null constructor - only operator= is supported.
+    Iterator() : vec(nullptr) {
+    }
+
+    const Iterator& operator=(const Iterator& o) {
+      high_bits = o.high_bits;
+      len = o.len;
+      offset = o.offset;
+      bit = o.bit;
+      begin_rank = o.begin_rank;
+      end_rank = o.end_rank;
+      level_skip = o.level_skip;
+      vec = o.vec;
+      return *this;
+    }
 
     uint64_t splitValue() const {
       return high_bits + (1LL << bit);
@@ -138,7 +153,7 @@ class BalancedWavelet {
       return bit == 0;
     }
 
-    Iterator child(bool right) {
+    Iterator child(bool right) const {
       return Iterator(*this, right);
     }
 
