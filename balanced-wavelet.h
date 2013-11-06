@@ -26,7 +26,7 @@ class BalancedWaveletEncoder {
 
   template <typename It>
   BalancedWaveletEncoder(It begin, It end) {
-    int64_t max = 0;
+    uint64_t max = 0;
     for (It it = begin; it != end; ++it) {
       if (*it > max) {
         max = *it;
@@ -40,8 +40,8 @@ class BalancedWaveletEncoder {
 
   explicit BalancedWaveletEncoder(int b) : bits(b) { }
 
-  void append(int64_t value) {
-    assert (value < (1LL<<bits));
+  void append(uint64_t value) {
+    assert (value < (1ULL<<bits));
     ConstructNode* add = &croot;
     int j = 0;
     for (int i = bits - 1; i >= 0; --i) {
@@ -130,7 +130,7 @@ class BalancedWavelet {
           vec(&wt.tree_)
     {}
 
-    int64_t splitValue() const {
+    uint64_t splitValue() const {
       return high_bits + (1LL << bit);
     }
 
@@ -174,7 +174,7 @@ class BalancedWavelet {
       begin_rank = vec->rank(offset, 1);
       end_rank = vec->rank(offset + len, 1) - begin_rank;
     }
-    int64_t high_bits;
+    uint64_t high_bits;
     size_t len;
     size_t offset;
     size_t bit;
@@ -185,7 +185,7 @@ class BalancedWavelet {
     friend class BalancedWavelet;
   };
 
-  size_t rank(size_t pos, int64_t value) const {
+  size_t rank(size_t pos, uint64_t value) const {
     assert(pos <= size());
     Iterator it(*this);
     for (;;) {
@@ -197,7 +197,7 @@ class BalancedWavelet {
     return pos;
   }
 
-  size_t rankLE(size_t pos, int64_t value) const {
+  size_t rankLE(size_t pos, uint64_t value) const {
     assert(pos <= size());
     size_t ret = 0;
     Iterator it(*this);
@@ -214,7 +214,7 @@ class BalancedWavelet {
     return pos + ret;
   }
 
-  int64_t operator[](size_t i) const {
+  uint64_t operator[](size_t i) const {
     Iterator it(*this);
     while (!it.isLeaf()) {
       bool b = it[i];
@@ -225,11 +225,11 @@ class BalancedWavelet {
     return it.high_bits + it[i];
   }
 
-  size_t select(size_t rank, int64_t value) const {
+  size_t select(size_t rank, uint64_t value) const {
     return select(Iterator(*this), rank, value);
   }
 
-  size_t select(Iterator it, size_t rank, long value) const {
+  size_t select(Iterator it, size_t rank, uint64_t value) const {
     if (it.count() == 0) return 0;
     if (rank == 0) return 0;
     bool b = value >= it.splitValue();

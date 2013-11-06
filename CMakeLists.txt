@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 2.6.0)
 ## Project information ##
 project(sdsl CXX C)
 ADD_DEFINITIONS(
+      -g
       -std=c++0x # Or -std=c++0x
       -march=native
       -Wall
-      -g
        )
 
 add_executable(fast-bit-vector_test fast-bit-vector_test.cpp fast-bit-vector.cpp)

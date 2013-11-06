@@ -77,6 +77,11 @@ class SparseBitVector {
     return ((high_bits_.select(rank, 1) - rank) << w_) + low(rank-1) + 1;
   }
 
+  size_t count(bool bit) const {
+    if (bit) return pop_;
+    return size_ - pop_;
+  }
+
   size_t bitSize() const {
     return w_ * pop_ + high_bits_.bitSize();
   }
