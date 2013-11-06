@@ -42,24 +42,3 @@ On my computer (i7 2600k 4.5ghz) with popcount instruction
 - SkewedWaveletTree::rankLE < 170ns with skewed input.
 
 See fast-bit-vector_benchmark.cpp and wavelet_benchmark.cpp.
-
-TODO
-=================
-- Implement some kind of compressed bitvector, perhaps also from 
-  "Fast, Small, Simple Rank/Select on Bitmaps"
-
-FastBitVector
--------------------
-- Get rid of std::vector<bool> in constructors - allow in-place construction:
-  * FastBitVector::append OR
-  * FastBitVector(PlainBitVector&& moved)
-- Store small vectors in place of members (like small string optimization)
-
-BalancedWaveletTree
--------------------
-- Implement select for completeness.
-- Method to iterate all positions i with wt[i] <= value.
-
-SkewedWaveletTree
--------------------
-- Try construction without all that extra space.
