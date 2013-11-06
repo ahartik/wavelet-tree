@@ -1,8 +1,10 @@
+This is my collection of wavelet tree implementations. It is work (hopefully) towards my master's thesis.
+
 FastBitVector
 ====================
-This is an implementation of a simple bitvector from paper
-"Fast, Small, Simple Rank/Select on Bitmaps" by Navarro and Providel.
-Uses about 3% extra space for support structures.
+Uncompressed bitvector with rank and select.
+- Rank is a modification Sebastiano Vigna's rank9 from 'Broadword Implementation of Rank/Select Queries.' with less space overhead.
+- Select uses its own sampling + binary search on rank-superblocks + linear search on rank-blocks.
 FastBitVector Operations
 -----------------------------
 - FastBitVector::rank(size_t pos, bool bit)
@@ -10,6 +12,11 @@ FastBitVector Operations
 - FastBitVector::select(size_t rank, bool bit)
   * Returns smallest i with rank(i, bit) == rank
 
+SparseBitVector
+===================
+Sparse bitvector 
+- At the moment uses 5m + n/16 bits, in the future perhaps ~ 1.92m + m\*log2(n/m) bits like Sadakane.
+- D. Okanohara, K. Sadakane: 'Practical Entropy-Compressed Rank/Select Dictionary', Proceedings of ALENEX 2007.
 
 Wavelet trees
 ===========================
@@ -30,14 +37,14 @@ BalancedWavelet
 
 SkewedWavelet
 -----------------
-- Collection of different sized balanced wavelet trees.
+- Array of different sized balanced wavelet trees.
 - Operations in O(log value)
 
 Benchmarks
 =================
 On my computer (i7 2600k 4.5ghz) with popcount instruction
 - FastBitVector::rank < 30ns
-- FastBitVector::select < 75ns
+- FastBitVector::select < 40ns
 - BalancedWaveletTree::rankLE < 1000ns
 - SkewedWaveletTree::rankLE < 170ns with skewed input.
 

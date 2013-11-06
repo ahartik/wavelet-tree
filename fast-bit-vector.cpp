@@ -46,15 +46,28 @@ FastBitVector::FastBitVector(const std::vector<bool>& data) {
   }
 
   // Init rank samples.
-  rank_samples_ = new size_t[1 + size_ / RankSample];
-  rank_samples_[0] = 0;
+  rank_samples_ = new RankBlock[1 + size_ / RankSample];
+  rank_samples_[0].abs = 0;
   size_t sum = 0;
-  for (size_t i = 0; i < size_/RankSample; i++) {
+  for (size_t i = 0; i <= size_/RankSample; i++) {
+    uint64_t sub_block[6] = {};
     for (size_t j = 0; j < RankSample; ++j) {
       size_t idx = i * RankSample + j;
+      if (idx >= data.size()) break;
       sum += data[idx];
+      sub_block[j / RankSubSample] += data[idx];
     }
-    rank_samples_[1 + i] = sum;
+    for (int j = 1; j < 6; ++j) {
+      sub_block[j] += sub_block[j-1];
+    }
+    // Put in reverse order to remove branch for sub_block = 0
+    rank_samples_[i].rel = 
+        (sub_block[0] << 44) + 
+        (sub_block[1] << 33) + 
+        (sub_block[2] << 22) + 
+        (sub_block[3] << 11) + 
+        (sub_block[4] << 00);
+    rank_samples_[1 + i].abs = sum;
   }
 
   // Init select samples.
@@ -68,6 +81,11 @@ FastBitVector::FastBitVector(const std::vector<bool>& data) {
     sums[bit]++;
     if (sums[bit] % SelectSample == 0) {
       size_t id = idx[bit]++;
+      size_t rs = i / RankSample;
+      select_samples_[bit][id] = rs;
+      if (bit)
+        assert(rank_samples_[rs].abs <= id * SelectSample);
+#if 0
       size_t pos = i + 1;
       size_t word = pos / WordBits;
       // Set to point to the word.
@@ -77,10 +95,11 @@ FastBitVector::FastBitVector(const std::vector<bool>& data) {
       unsigned long counted = bit ? wmask & bits_[word] :
           (wmask & ~bits_[word]);
       select_samples_[bit][id] |= __builtin_popcountll(counted);
+#endif
     }
   }
-  select_samples_[0][idx[0]] = (size_ / WordBits) * WordBits;
-  select_samples_[1][idx[1]] = (size_ / WordBits) * WordBits;
+  select_samples_[0][idx[0]] = 1 + (size_ / RankSample);
+  select_samples_[1][idx[1]] = 1 + (size_ / RankSample);
 }
 
 FastBitVector::FastBitVector(FastBitVector&& other) 

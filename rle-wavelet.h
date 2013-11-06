@@ -45,12 +45,10 @@ class RLEWavelet {
     run_end_ = SparseBitVector(run_end.begin(), run_end.end());
     run_end.clear();
     num_rank_.resize(run.size());
-    num_pos_.resize(run.size());
     std::vector<size_t>& run_lens = run_end;
     size_t total = 0;
     for (size_t i = 0; i < run.size(); ++i) {
       num_rank_[i] = run_lens.size();
-      num_pos_[i] = total;
       for (size_t j = 0; j < run[i].size(); ++j) {
         total += run[i][j];
         run_lens.push_back(total-1);
@@ -116,7 +114,10 @@ class RLEWavelet {
     size_t total = head_.bitSize();
     total += run_end_.bitSize();
     total += run_len_.bitSize();
-    total += num_rank_.size() * sizeof(size_t) * 8 * 2;
+    total += num_rank_.size() * sizeof(size_t) * 8;
+#if NUM_POS_ARRAY
+    total += num_pos_.size() * sizeof(size_t) * 8;
+#endif
     std::cout << "num_rank.size() = " << num_rank_.size() << "\n";
     return total;
   }
@@ -166,14 +167,12 @@ class RLEWavelet {
   size_t runRank(uint64_t x, size_t runs) const {
     if (runs == 0) return 0;
     size_t ret = run_len_.select1(num_rank_[x] + runs) -
-                 num_pos_[x];
-              // run_len_.select1(num_rank_[x]);
+                 run_len_.select1(num_rank_[x]);
     return ret;
   }
 
   SparseBitVector run_end_;
   SparseBitVector run_len_;
-  std::vector<size_t> num_pos_;
   std::vector<size_t> num_rank_;
   BalancedWavelet head_;
 };
