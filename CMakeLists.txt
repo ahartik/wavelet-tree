@@ -9,8 +9,10 @@ ADD_DEFINITIONS(
       -Wall
        )
 
+include_directories(sdsl/include)
 add_executable(bit-vector_test bit-vector_test.cpp fast-bit-vector.cpp)
 target_link_libraries(bit-vector_test
+  ${CMAKE_SOURCE_DIR}/libsdsl.a
   libgtest.a
   libgtest_main.a
   pthread
@@ -23,6 +25,7 @@ set_target_properties(fast-bit-vector_benchmark PROPERTIES COMPILE_FLAGS "-O3 -D
 
 add_executable(wavelet_test wavelet_test.cpp fast-bit-vector.cpp)
 target_link_libraries(wavelet_test
+  ${CMAKE_SOURCE_DIR}/libsdsl.a
   libgtest.a
   libgtest_main.a
   pthread

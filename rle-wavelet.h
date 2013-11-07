@@ -2,12 +2,13 @@
 #define RLE_WAVELET_H
 
 #include <algorithm>
+#include <iostream>
 
 #include "fast-bit-vector.h"
 #include "sparse-bit-vector.h"
 #include "skewed-wavelet.h"
 
-template<typename Wavelet = BalancedWavelet>
+template<typename Wavelet = BalancedWavelet<>>
 class RLEWavelet {
  public:
   template<typename It>
@@ -45,11 +46,12 @@ class RLEWavelet {
     assert(head.size() == run_end.size());
     run_end_ = SparseBitVector(run_end.begin(), run_end.end());
     run_end.clear();
-    num_rank_.resize(run.size());
+    std::vector<size_t> num_rank;
+    num_rank.resize(run.size());
     std::vector<size_t>& run_lens = run_end;
     size_t total = 0;
     for (size_t i = 0; i < run.size(); ++i) {
-      num_rank_[i] = run_lens.size();
+      num_rank[i] = run_lens.size();
       for (size_t j = 0; j < run[i].size(); ++j) {
         total += run[i][j];
         run_lens.push_back(total-1);
@@ -59,6 +61,7 @@ class RLEWavelet {
     assert(run_lens.size() == head.size());
     head_ = Wavelet(head.begin(), head.end());
     run_len_ = SparseBitVector(run_lens.begin(), run_lens.end());
+    num_rank_ = SparseBitVector(num_rank.begin(), num_rank.end());
     assert(run_lens.size() == run_len_.count(1));
   }
 
@@ -115,11 +118,7 @@ class RLEWavelet {
     size_t total = head_.bitSize();
     total += run_end_.bitSize();
     total += run_len_.bitSize();
-    total += num_rank_.size() * sizeof(size_t) * 8;
-#if NUM_POS_ARRAY
-    total += num_pos_.size() * sizeof(size_t) * 8;
-#endif
-    std::cout << "num_rank.size() = " << num_rank_.size() << "\n";
+    total += num_rank_.bitSize();
     return total;
   }
 
@@ -167,14 +166,16 @@ class RLEWavelet {
 
   size_t runRank(uint64_t x, size_t runs) const {
     if (runs == 0) return 0;
-    size_t ret = run_len_.select1(num_rank_[x] + runs) -
-                 run_len_.select1(num_rank_[x]);
+    size_t num_rank = num_rank_.select1(x);
+    size_t ret = run_len_.select1(num_rank + runs) -
+                 run_len_.select1(num_rank);
     return ret;
   }
 
   SparseBitVector run_end_;
   SparseBitVector run_len_;
-  std::vector<size_t> num_rank_;
+  SparseBitVector num_rank_;
   Wavelet head_;
 };
+
 #endif

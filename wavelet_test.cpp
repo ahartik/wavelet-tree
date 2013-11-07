@@ -2,6 +2,8 @@
 #include "skewed-wavelet.h"
 #include "rle-wavelet.h"
 
+#include "rrr-bit-vector.h"
+
 #include <gtest/gtest.h>
 #include <iostream>
 #include <vector>
@@ -10,7 +12,7 @@ using namespace std;
 // TODO implement these in all Wavelet trees.
 TEST(BalancedWaveletTest, Select) {
   vector<int> v = {4,2,3,1,2,3,4,5};
-  BalancedWavelet wt(v.begin(), v.end(), 3);
+  BalancedWavelet<> wt(v.begin(), v.end(), 3);
   EXPECT_EQ(1, wt.select(1, 4));
   EXPECT_EQ(2, wt.select(1, 2));
   EXPECT_EQ(3, wt.select(1, 3));
@@ -20,7 +22,7 @@ TEST(BalancedWaveletTest, Select) {
 
 TEST(BalancedWaveletTest, Indexing) {
   vector<int> v = {4,2,3,1,2,3,4,5,0};
-  BalancedWavelet wt(v.begin(), v.end(), 3);
+  BalancedWavelet<> wt(v.begin(), v.end(), 3);
   for (size_t i = 0; i < v.size(); ++i) {
     EXPECT_EQ(v[i], wt[i]) << " i = " << i;
   }
@@ -32,10 +34,14 @@ class WaveletTest : public ::testing::Test {
 };
 
 typedef ::testing::Types<
-  BalancedWavelet,
-  SkewedWavelet,
-  RLEWavelet<BalancedWavelet>,
-  RLEWavelet<SkewedWavelet>
+  BalancedWavelet<>,
+  SkewedWavelet<>,
+  RLEWavelet<BalancedWavelet<>>,
+  RLEWavelet<SkewedWavelet<>>,
+  BalancedWavelet<RRRBitVector>,
+  SkewedWavelet<RRRBitVector>,
+  RLEWavelet<BalancedWavelet<RRRBitVector>>,
+  RLEWavelet<SkewedWavelet<RRRBitVector>>
   > WaveletTypes;
 
 TYPED_TEST_CASE(WaveletTest, WaveletTypes );

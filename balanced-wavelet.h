@@ -7,6 +7,9 @@
 #include <iostream>
 #include <cmath>
 
+template<typename BitVector = FastBitVector>
+class BalancedWavelet;
+
 class BalancedWaveletEncoder {
   struct ConstructNode {
     std::vector<bool> vec;
@@ -56,11 +59,13 @@ class BalancedWaveletEncoder {
   }
 
  private:
+  template<typename T>
   friend class BalancedWavelet;
   int bits;
   ConstructNode croot;
 };
 
+template<typename BitVector>
 class BalancedWavelet {
  public:
   static const size_t npos = -1;
@@ -85,7 +90,7 @@ class BalancedWavelet {
     delete enc.croot.child[1];
     enc.croot.child[0] = nullptr;
     enc.croot.child[1] = nullptr;
-    FastBitVector tree(init);
+    BitVector tree(init);
     swap(tree_, tree);
   }
 
@@ -196,7 +201,7 @@ class BalancedWavelet {
     size_t begin_rank;
     size_t end_rank;
     size_t level_skip;
-    const FastBitVector* vec;
+    const BitVector* vec;
     friend class BalancedWavelet;
   };
 
@@ -259,11 +264,11 @@ class BalancedWavelet {
     return size_;
   }
   size_t bitSize() const {
-    return tree_.size() + tree_.extra_bits() + sizeof(*this) * 8;
+    return tree_.bitSize() + sizeof(*this) * 8;
   }
  private:
 
-  FastBitVector tree_;
+  BitVector tree_;
   size_t size_;
   int bits_;
 };

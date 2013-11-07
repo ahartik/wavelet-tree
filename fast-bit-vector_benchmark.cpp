@@ -5,7 +5,7 @@
 
 using namespace std;
 void Rank(int iters) {
-  const size_t size = 1<<25;
+  const size_t size = 1<<28;
   std::cout << "Rank:\n";
   using namespace std::chrono;
   std::mt19937_64 mt(time(0));
@@ -53,7 +53,7 @@ void RankSparse(int iters) {
 }
 
 void Select(int iters) {
-  const size_t size = 1<<25;
+  const size_t size = 1<<28;
   std::cout << "Select:\n";
   using namespace std::chrono;
   std::mt19937_64 mt(time(0));

@@ -35,15 +35,15 @@ void RankLE(int iters, int m, const char* name) {
 }
 
 int main() {
-  RankLE<BalancedWavelet>(100000, 32, "BalancedWavelet");
-  RankLE<BalancedWavelet>(100000, 1<<10, "BalancedWavelet");
+  RankLE<BalancedWavelet<>>(100000, 32, "BalancedWavelet");
+  RankLE<BalancedWavelet<>>(100000, 1<<10, "BalancedWavelet");
   cout << endl;
-  RankLE<SkewedWavelet>(100000, 32, "SkewedWavelet");
-  RankLE<SkewedWavelet>(100000, 1<<10, "SkewedWavelet");
+  RankLE<SkewedWavelet<>>(100000, 32, "SkewedWavelet");
+  RankLE<SkewedWavelet<>>(100000, 1<<10, "SkewedWavelet");
   cout << endl;
-  RankLE<RLEWavelet<BalancedWavelet>>(100000, 32, "RLEWavelet<BalancedWavelet>");
-  RankLE<RLEWavelet<BalancedWavelet>>(100000, 1<<10, "RLEWavelet<BalancedWavelet>");
+  RankLE<RLEWavelet<BalancedWavelet<>>>(100000, 32, "RLEWavelet<BalancedWavelet>");
+  RankLE<RLEWavelet<BalancedWavelet<>>>(100000, 1<<10, "RLEWavelet<BalancedWavelet>");
   cout << endl;
-  RankLE<RLEWavelet<SkewedWavelet>>(100000, 32, "RLEWavelet<SkewedWavelet>");
-  RankLE<RLEWavelet<SkewedWavelet>>(100000, 1<<10, "RLEWavelet<SkewedWavelet>");
+  RankLE<RLEWavelet<SkewedWavelet<>>>(100000, 32, "RLEWavelet<SkewedWavelet>");
+  RankLE<RLEWavelet<SkewedWavelet<>>>(100000, 1<<10, "RLEWavelet<SkewedWavelet>");
 }

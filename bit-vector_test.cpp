@@ -3,6 +3,7 @@
 #include <random>
 #include "fast-bit-vector.h"
 #include "sparse-bit-vector.h"
+#include "rrr-bit-vector.h"
 
 
 template<typename T>
@@ -12,7 +13,9 @@ class BitVectorTest : public ::testing::Test {
 
 typedef ::testing::Types<
   FastBitVector,
-  SparseBitVector> BitVectorTypes;
+  SparseBitVector,
+  RRRBitVector
+  > BitVectorTypes;
 
 TYPED_TEST_CASE(BitVectorTest, BitVectorTypes);
 

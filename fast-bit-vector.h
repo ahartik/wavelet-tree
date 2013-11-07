@@ -86,10 +86,7 @@ class FastBitVector {
     size_t block = idx / SelectSample;
     size_t left = select_samples_[bit][block];
     size_t right = select_samples_[bit][block + 1];
-
-    size_t word_start = left * RankSample / WordBits;
-    size_t word_rank = bit ? rank_samples_[left].abs : left * RankSample - rank_samples_[left].abs;
-    assert(word_rank <= idx);
+    // Binary search correct rank-sample
     while (left + 1 < right) {
       size_t c = (left + right) / 2;
       size_t r = bit ? rank_samples_[c].abs : c * RankSample - rank_samples_[c].abs;
@@ -97,12 +94,12 @@ class FastBitVector {
         right = c;
       } else {
         left = c;
-        word_rank = r;
-        word_start = left * RankSample / WordBits;
       }
     }
-
+    size_t word_start = left * RankSample / WordBits;
+    size_t word_rank = bit ? rank_samples_[left].abs : left * RankSample - rank_samples_[left].abs;
     assert(word_rank <= idx);
+    // Linear search for correct rank-sub-sample
     const size_t total_words = (size_ + WordBits - 1) / WordBits;
     for (int sub_block = 5; sub_block > 0; --sub_block) {
       size_t r = subBlockRank(left, sub_block);

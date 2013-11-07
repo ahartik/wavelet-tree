@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <vector>
 
+template<typename BitVector = FastBitVector>
 class SkewedWavelet {
   static const int StartSize = 2;
   static const int StartBits = 1;
@@ -76,13 +77,14 @@ class SkewedWavelet {
   size_t bitSize() const {
     size_t ret = sizeof(SkewedWavelet) * 8;
     for (size_t i = 0; i < wt_pick_.size(); ++i) {
-      ret += wt_pick_[i].size() + wt_pick_[i].extra_bits();
+      ret += wt_pick_[i].bitSize();
       ret += wt_[i].bitSize();
     }
     return ret;
   }
   class Iterator {
    public:
+    typedef typename BalancedWavelet<BitVector>::Iterator BalancedIterator;
     Iterator(const SkewedWavelet& sk) : wt(&sk) {
       spine = true;
       level = 0;
@@ -147,7 +149,7 @@ class SkewedWavelet {
           ret.spine = false;
           ret.level = level;
           ret.level_start = level_start;
-          ret.balanced_it = BalancedWavelet::Iterator(wt->wt_[level]);
+          ret.balanced_it = BalancedIterator(wt->wt_[level]);
         }
         return ret;
       } else {
@@ -164,7 +166,7 @@ class SkewedWavelet {
     int level;
     uint64_t level_start;
     const SkewedWavelet* wt;
-    BalancedWavelet::Iterator balanced_it;
+    BalancedIterator balanced_it;
   };
  private:
   int Level(int64_t x, int64_t* fix) const {
@@ -185,8 +187,8 @@ class SkewedWavelet {
     return 0;
   }
 
-  std::vector<BalancedWavelet> wt_;
-  std::vector<FastBitVector> wt_pick_;
+  std::vector<BalancedWavelet<BitVector>> wt_;
+  std::vector<BitVector> wt_pick_;
 };
 
 #endif
