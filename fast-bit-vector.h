@@ -43,7 +43,7 @@ class FastBitVector {
   static const unsigned RankSample = 2048;
   static const unsigned RankSubSample = 384;
   // This CAN be tweaked.
-  static const unsigned SelectSample = 8 * 1024;
+  static const unsigned SelectSample = 2 * 2048;
   static const unsigned WordBits = 8 * sizeof(long);
  public:
   // Empty constructor.
@@ -62,13 +62,14 @@ class FastBitVector {
   // Number of positions < pos set with bit_value.
   size_t rank(size_t pos, bool bit_value) const {
     size_t block = pos / RankSample;
-    size_t remaining = pos % RankSample;
+    unsigned remaining = pos % RankSample;
     size_t sum = rank_samples_[block].abs;
     int sub_block = remaining / RankSubSample;
     sum += subBlockRank(block, sub_block);
     remaining -= RankSubSample * sub_block;
     size_t word = (block * RankSample + sub_block * RankSubSample) / WordBits;
-    for (;(word + 1) * WordBits <= pos; ++word) {
+    size_t end_word = pos / WordBits;
+    for (; word < end_word; ++word) {
       sum += __builtin_popcountll(bits_[word]);
       remaining -= WordBits;
     }
@@ -162,7 +163,9 @@ class FastBitVector {
   };
 
   RankBlock* rank_samples_;
-  size_t* select_samples_[2];
+  // uint32_t is enough for 2048 * 2^32 bits = 1TB
+  // Should be good enough for few years.
+  uint32_t* select_samples_[2];
 };
 
 #endif

@@ -71,8 +71,8 @@ FastBitVector::FastBitVector(const std::vector<bool>& data) {
   }
 
   // Init select samples.
-  select_samples_[1] = new size_t[2 + popcount_ / SelectSample];
-  select_samples_[0] = new size_t[2 + (size_ - popcount_) / SelectSample];
+  select_samples_[1] = new uint32_t[2 + popcount_ / SelectSample];
+  select_samples_[0] = new uint32_t[2 + (size_ - popcount_) / SelectSample];
   size_t sums[2] = {0, 0};
   size_t idx[2] = {1, 1};
   select_samples_[0][0] = select_samples_[1][0] = 0;
