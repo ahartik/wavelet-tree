@@ -166,7 +166,7 @@ class RLEWavelet {
 
   size_t runRank(uint64_t x, size_t runs) const {
     if (runs == 0) return 0;
-    size_t num_rank = num_rank_.select1(x);
+    size_t num_rank = num_rank_.select1(x+1) - 1 ;
     size_t ret = run_len_.select1(num_rank + runs) -
                  run_len_.select1(num_rank);
     return ret;
