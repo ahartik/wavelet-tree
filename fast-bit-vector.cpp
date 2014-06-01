@@ -46,7 +46,7 @@ FastBitVector::FastBitVector(const std::vector<bool>& data) {
   }
 
   // Init rank samples.
-  rank_samples_ = new RankBlock[1 + size_ / RankSample];
+  rank_samples_ = new RankBlock[2 + size_ / RankSample];
   rank_samples_[0].abs = 0;
   size_t sum = 0;
   for (size_t i = 0; i <= size_/RankSample; i++) {

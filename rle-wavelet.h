@@ -64,6 +64,20 @@ class RLEWavelet {
     num_rank_ = SparseBitVector(num_rank.begin(), num_rank.end());
     assert(run_lens.size() == run_len_.count(1));
   }
+  RLEWavelet() { }
+  RLEWavelet(RLEWavelet&& o) :
+    head_(std::move(o.head_)),
+    run_len_(std::move(o.run_len_)),
+    num_rank_(std::move(o.num_rank_)),
+    run_end_(std::move(o.run_end))
+  { }
+  const RLEWavelet& operator=(RLEWavelet&& o) {
+    head_ = std::move(o.head_);
+    run_len_ = std::move(o.run_len_);
+    num_rank_ = std::move(o.num_rank_);
+    run_end_ = std::move(o.run_end_);
+    return *this;
+  }
 
   size_t rank(size_t pos, uint64_t value) const {
     if (pos == 0) return 0;
