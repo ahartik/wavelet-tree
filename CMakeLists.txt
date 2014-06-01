@@ -5,7 +5,6 @@ project(wavelet CXX C)
 ADD_DEFINITIONS(
       -g
       -std=c++0x # Or -std=c++0x
-      -march=native
       -Wall
        )
 
@@ -21,7 +20,7 @@ add_custom_command(TARGET bit-vector_test POST_BUILD
     COMMAND bit-vector_test || true)
 
 add_executable(fast-bit-vector_benchmark fast-bit-vector_benchmark.cpp fast-bit-vector.cpp)
-set_target_properties(fast-bit-vector_benchmark PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG -march=native")
+set_target_properties(fast-bit-vector_benchmark PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG")
 
 add_executable(wavelet_test wavelet_test.cpp fast-bit-vector.cpp)
 target_link_libraries(wavelet_test
@@ -34,4 +33,4 @@ add_custom_command(TARGET wavelet_test POST_BUILD
     COMMAND wavelet_test || true)
 
 add_executable(wavelet_benchmark wavelet_benchmark.cpp fast-bit-vector.cpp)
-set_target_properties(wavelet_benchmark PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG -march=native")
+set_target_properties(wavelet_benchmark PROPERTIES COMPILE_FLAGS "-O3 -DNDEBUG")

@@ -9,6 +9,7 @@ class RRRBitVector {
  public:
   RRRBitVector() {
   }
+  RRRBitVector(const RRRBitVector& o) = delete;
 
   RRRBitVector(const std::vector<bool>& vec) {
     sdsl::bit_vector bv(vec.size());
@@ -68,7 +69,6 @@ class RRRBitVector {
     return size;
   }
  private:
-  RRRBitVector(const RRRBitVector& o);
   typedef sdsl::rrr_vector<63> vector_type;
   vector_type vec_;
   typename vector_type::rank_1_type rank_;

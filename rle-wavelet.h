@@ -25,7 +25,7 @@ class RLEWavelet {
       if (*it != head.back()) {
         ValueInt last = head.back();
         run_end.push_back(i);
-        if (run.size() <= last) {
+        if (run.size() <= size_t(last)) {
           run.resize(last + 1);
         }
         run[last].push_back(run_pos);
@@ -37,7 +37,7 @@ class RLEWavelet {
     {
       ValueInt last = head.back();
       run_end.push_back(i);
-      if (run.size() <= last) {
+      if (run.size() <= size_t(last)) {
         run.resize(last + 1);
       }
       run[last].push_back(run_pos);

@@ -31,7 +31,7 @@ class BalancedWaveletEncoder {
   BalancedWaveletEncoder(It begin, It end) {
     uint64_t max = 0;
     for (It it = begin; it != end; ++it) {
-      if (*it > max) {
+      if (uint64_t(*it) > max) {
         max = *it;
       }
     }
