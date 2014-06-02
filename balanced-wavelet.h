@@ -135,8 +135,16 @@ class BalancedWavelet {
           vec(&wt.tree_)
     {}
     // Null constructor - only operator= is supported.
-    Iterator() : vec(nullptr) {
-    }
+    Iterator() 
+        : high_bits(0),
+          len(0),
+          offset(0),
+          bit(0),
+          begin_rank(0),
+          end_rank(0),
+          level_skip(0),
+          vec(nullptr)
+    {}
 
     const Iterator& operator=(const Iterator& o) {
       high_bits = o.high_bits;
