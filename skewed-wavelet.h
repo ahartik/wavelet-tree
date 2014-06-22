@@ -15,6 +15,41 @@ class SkewedWavelet {
   // Empty constructor
   SkewedWavelet() {
   }
+
+  template<typename IntType>
+  SkewedWavelet(IntType* arr, size_t size) {
+    std::vector<size_t> level_size(MaxLevel);
+    std::vector<std::vector<bool>> pick(MaxLevel);
+    for (size_t i = 0; i < size; ++i) {
+      int64_t fixed;
+      int lvl = Level(arr[i], &fixed);
+      level_size[lvl]++;
+      for (int j = 0; j < lvl; ++j)
+        pick[j].push_back(0);
+      pick[lvl].push_back(1);
+    }
+    wt_pick_.reserve(MaxLevel);
+    for (int lvl = 0; lvl < MaxLevel; ++lvl) {
+      wt_pick_.emplace_back(pick[lvl]);
+    }
+    wt_.reserve(MaxLevel);
+
+    // reorder array by levels
+    std::stable_sort(arr, arr + size, &LevelCmp);
+    size_t start = 0;;
+    for (size_t j = 0; j < MaxLevel; ++j) {
+      for (size_t i = 0; i < level_size[j]; ++i) {
+        int64_t fixed;
+        int64_t a = arr[start + i];
+        int lvl = Level(a, &fixed);
+        (void)lvl;
+        assert(lvl == j);
+        arr[start + i] = fixed;
+      }
+      wt_.emplace_back(arr + start, arr + start + level_size[j]);
+      start += level_size[j];
+    }
+  }
   template<typename It>
   SkewedWavelet(It begin, It end) {
     std::vector<BalancedWaveletEncoder> lv;
@@ -169,7 +204,7 @@ class SkewedWavelet {
     BalancedIterator balanced_it;
   };
  private:
-  int Level(int64_t x, int64_t* fix) const {
+  static int Level(int64_t x, int64_t* fix) {
     int64_t size = StartSize;
     int64_t start = 0;
     int64_t end = StartSize;
@@ -185,6 +220,11 @@ class SkewedWavelet {
     assert(false);
     *fix = 0;
     return 0;
+  }
+
+  static bool LevelCmp(int64_t a, int64_t b) {
+    int64_t fix;
+    return Level(a, &fix) < Level(b, &fix);
   }
 
   std::vector<BalancedWavelet<BitVector>> wt_;

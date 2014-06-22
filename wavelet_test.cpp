@@ -12,7 +12,8 @@ using namespace std;
 // TODO implement these in all Wavelet trees.
 TEST(BalancedWaveletTest, Select) {
   vector<int> v = {4,2,3,1,2,3,4,5};
-  BalancedWavelet<> wt(v.begin(), v.end(), 3);
+  // BalancedWavelet<> wt(v.begin(), v.end(), 3);
+  BalancedWavelet<> wt(std::move(v));
   EXPECT_EQ(1, wt.select(1, 4));
   EXPECT_EQ(2, wt.select(1, 2));
   EXPECT_EQ(3, wt.select(1, 3));

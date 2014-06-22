@@ -43,7 +43,7 @@ class RRRBitVector {
     if (!b) return i - r;
     return r;
   }
-  size_t select(size_t i, bool b) {
+  size_t select(size_t i, bool b) const {
     if (i == 0) return 0;
     if (b) return select1_(i) + 1;
     return select0_(i) + 1;

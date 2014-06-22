@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <cassert>
 #include <iostream>
+#include <algorithm>
 #include <cmath>
 
 template<typename BitVector = FastBitVector>
@@ -94,14 +95,65 @@ class BalancedWavelet {
     swap(tree_, tree);
   }
 
+  template<typename IntType>
+  BalancedWavelet(std::vector<IntType> && vec)
+      : BalancedWavelet(&vec[0], vec.size()) { }
+  template<typename IntType>
+  BalancedWavelet(IntType* vec, size_t size) 
+      : size_(size) {
+    if (size == 0) return;
+    IntType max = *std::max_element(&vec[0], &vec[size]);
+    bits_ = 1 + log2(max);
+    if (bits_ <= 0) bits_ = 1;
+    std::vector<bool> init;
+    init.reserve(bits_ * size_);
+    uint64_t mask = 0ull;
+
+    for (int b = 0; b < bits_; ++b) {
+      uint64_t bit = 1ull << (bits_ - b - 1);
+      for (size_t i = 0; i < size_; ++i) {
+        init.push_back((vec[i] & bit) != 0);
+      }
+      size_t start = 0;
+      auto part_pred = [&](IntType x) -> bool {
+        return (x & bit) == 0;
+      };
+      if (bit == 1) break;
+      // sort each block
+      for (size_t i = 0; i <= size_; ++i) {
+        if (i == size_ || (vec[i] & mask) != (vec[start] & mask)) {
+          std::stable_partition(&vec[start], &vec[i], part_pred);
+          start = i;
+        }
+      }
+      mask |= bit;
+    }
+    BitVector tree(init);
+    swap(tree_, tree);
+  }
+  
+#define VEC_INIT
+
   template<typename It>
   BalancedWavelet(It begin, It end, int bits) 
-      : BalancedWavelet(BalancedWaveletEncoder(begin, end, bits)) {
+#ifdef VEC_INIT
+       : BalancedWavelet(std::vector<
+                         typename std::iterator_traits<It>::value_type
+                         >(begin, end)) {
+#else 
+       : BalancedWavelet(BalancedWaveletEncoder(begin, end, bits)) {
+#endif
   }
 
   template<typename It>
   BalancedWavelet(It begin, It end) 
-      : BalancedWavelet(BalancedWaveletEncoder(begin, end)) {
+#ifdef VEC_INIT
+       : BalancedWavelet(std::vector<
+                         typename std::iterator_traits<It>::value_type
+                         >(begin, end)) {
+#else 
+       : BalancedWavelet(BalancedWaveletEncoder(begin, end)) {
+#endif
   }
 
   BalancedWavelet(const BalancedWavelet& o) = delete;

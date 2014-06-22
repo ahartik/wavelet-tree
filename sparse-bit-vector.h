@@ -43,6 +43,8 @@ class SparseBitVector {
     size_t y = high_bits_.select(high, 0);
     size_t x = y - high;
     for (;high_bits_[y] == 1; x++, y++) {
+      // TODO
+      // perhaps binary search here
       size_t l = this->low(x);
       if (l >= low) {
         if (l == low) return 1;
@@ -60,6 +62,8 @@ class SparseBitVector {
     size_t y = high_bits_.select(high, 0);
     size_t x = y - high;
     for (;high_bits_[y] == 1; x++, y++) {
+      // TODO
+      // perhaps binary search here
       size_t l = this->low(x);
       if (l >= low) {
         // if (l == low) ++x;
@@ -107,6 +111,9 @@ class SparseBitVector {
   }
 
  private:
+  size_t calc_size(int w, size_t n, size_t m) {
+    return w * m + m + (n >> w);
+  }
   template<typename It>
   void init(It begin, It end) {
     size_t m = std::distance(begin, end);
@@ -115,7 +122,11 @@ class SparseBitVector {
     size_t n = 1 + *(--last);
     size_ = n;
     // TODO calculate better w
-    w_ = 4;
+    w_ = 2;
+    while (w_ < 32 && calc_size(w_, n, m) > calc_size(w_ * 2, n, m)) {
+      w_ *= 2;
+    }
+
     size_t low_bits_size = 1 + w_ * m / 64;
     low_bits_ = new uint64_t[low_bits_size];
     memset(low_bits_, 0, 8 * low_bits_size);
@@ -123,7 +134,7 @@ class SparseBitVector {
     size_t i = 0;
     size_t offset = 0;
     uint64_t mask = (1LL << w_) - 1;
-    size_t z = 1 + log2(n) - w_;
+    size_t z = std::max(1L, long (1 + log2(n) - w_));
     std::vector<bool> high_bits(m + (1 << z));
     for (It it = begin; it != end; ++it) {
       uint64_t pos = *it;

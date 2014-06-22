@@ -59,7 +59,7 @@ class RLEWavelet {
       run[i] = std::vector<size_t>();
     }
     assert(run_lens.size() == head.size());
-    head_ = Wavelet(head.begin(), head.end());
+    head_ = Wavelet(&head[0], head.size()); // .begin(), head.end());
     run_len_ = SparseBitVector(run_lens.begin(), run_lens.end());
     num_rank_ = SparseBitVector(num_rank.begin(), num_rank.end());
     assert(run_lens.size() == run_len_.count(1));

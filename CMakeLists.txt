@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.6.0)
 ## Project information ##
 project(wavelet CXX C)
 ADD_DEFINITIONS(
+      -O0
       -g
       -std=c++0x # Or -std=c++0x
       -Wall
