@@ -12,12 +12,17 @@ template<typename Wt>
 void RankLE(int iters, int m, const char* name) {
   const size_t size = 1<<20;
   const size_t max = 1<<20;
+  const size_t max_run = 1024;
   std::cout << name << "::rankLE(" << m << "):\n";
   using namespace std::chrono;
   std::mt19937_64 mt(0);
   std::vector<uint64_t> v;
-  for (size_t j = 0; j < size; ++j) {
-    v.push_back(mt()%max);
+  while (v.size() < size) {
+    uint64_t val = mt() % max;
+    int run = 1 + mt() % max_run;
+    for (int i = 0; i < run && v.size() < size; ++i) {
+      v.push_back(val);
+    }
   }
   Wt wt(v.begin(), v.end());
   std::chrono::high_resolution_clock clock;
@@ -35,15 +40,16 @@ void RankLE(int iters, int m, const char* name) {
 }
 
 int main() {
-  RankLE<BalancedWavelet<>>(100000, 32, "BalancedWavelet");
-  RankLE<BalancedWavelet<>>(100000, 1<<10, "BalancedWavelet");
+  int iters = 100000;
+  RankLE<BalancedWavelet<>>(iters, 32, "BalancedWavelet");
+  RankLE<BalancedWavelet<>>(iters, 1<<10, "BalancedWavelet");
   cout << endl;
-  RankLE<SkewedWavelet<>>(100000, 32, "SkewedWavelet");
-  RankLE<SkewedWavelet<>>(100000, 1<<10, "SkewedWavelet");
+  RankLE<SkewedWavelet<>>(iters, 32, "SkewedWavelet");
+  RankLE<SkewedWavelet<>>(iters, 1<<10, "SkewedWavelet");
   cout << endl;
-  RankLE<RLEWavelet<BalancedWavelet<>>>(100000, 32, "RLEWavelet<BalancedWavelet>");
-  RankLE<RLEWavelet<BalancedWavelet<>>>(100000, 1<<10, "RLEWavelet<BalancedWavelet>");
+  RankLE<RLEWavelet<BalancedWavelet<>>>(iters, 32, "RLEWavelet<BalancedWavelet>");
+  RankLE<RLEWavelet<BalancedWavelet<>>>(iters, 1<<10, "RLEWavelet<BalancedWavelet>");
   cout << endl;
-  RankLE<RLEWavelet<SkewedWavelet<>>>(100000, 32, "RLEWavelet<SkewedWavelet>");
-  RankLE<RLEWavelet<SkewedWavelet<>>>(100000, 1<<10, "RLEWavelet<SkewedWavelet>");
+  RankLE<RLEWavelet<SkewedWavelet<>>>(iters, 32, "RLEWavelet<SkewedWavelet>");
+  RankLE<RLEWavelet<SkewedWavelet<>>>(iters, 1<<10, "RLEWavelet<SkewedWavelet>");
 }

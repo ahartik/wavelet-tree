@@ -98,6 +98,7 @@ class BalancedWavelet {
   template<typename IntType>
   BalancedWavelet(std::vector<IntType> && vec)
       : BalancedWavelet(&vec[0], vec.size()) { }
+
   template<typename IntType>
   BalancedWavelet(IntType* vec, size_t size) 
       : size_(size) {

@@ -25,6 +25,7 @@ int FBVInitTables() {
 
 FastBitVector::FastBitVector() {
   size_ = 0;
+  popcount_ = 0;
   bits_ = nullptr;
   rank_samples_ = nullptr;
   select_samples_[0] = nullptr;

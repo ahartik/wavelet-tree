@@ -61,6 +61,7 @@ class FastBitVector {
 
   // Number of positions < pos set with bit_value.
   size_t rank(size_t pos, bool bit_value) const {
+    if (pos == 0) return 0;
     size_t block = pos / RankSample;
     unsigned remaining = pos % RankSample;
     size_t sum = rank_samples_[block].abs;
@@ -82,6 +83,7 @@ class FastBitVector {
 
   // Returns smallest position pos so that rank(pos,bit) == idx
   size_t select(size_t idx, bool bit) const {
+    if (idx == 0) return 0;
     assert(idx <= count(bit));
     // Start from sampling.
     size_t block = idx / SelectSample;

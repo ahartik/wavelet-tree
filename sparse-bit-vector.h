@@ -1,6 +1,8 @@
 #pragma once
 
 #include "fast-bit-vector.h"
+#include "int-array.h"
+
 #include <iterator>
 #include <stdint.h>
 #include <cmath>
@@ -10,10 +12,9 @@ class SparseBitVector {
  public:
   // Empty constructor
   SparseBitVector()
-    : w_(4),
-      pop_(0),
-      size_(0),
-      low_bits_(nullptr) { }
+    : pop_(0),
+      size_(0)
+  {}
 
   template<typename It>
   SparseBitVector(It begin, It end) {
@@ -121,32 +122,20 @@ class SparseBitVector {
     It last = end;
     size_t n = 1 + *(--last);
     size_ = n;
-    // TODO calculate better w
-    w_ = 2;
-    while (w_ < 32 && calc_size(w_, n, m) > calc_size(w_ * 2, n, m)) {
-      w_ *= 2;
-    }
 
-    size_t low_bits_size = 1 + w_ * m / 64;
-    low_bits_ = new uint64_t[low_bits_size];
-    memset(low_bits_, 0, 8 * low_bits_size);
-    size_t j = 0;
+    w_ = 2;
+    while (w_ < 32 && calc_size(w_, n, m) > calc_size(w_ + 1, n, m)) {
+      w_ ++;
+    }
+    std::cout << "w = " << w_ << "\n";
+    low_arr_ = IntArray(w_, m);
     size_t i = 0;
-    size_t offset = 0;
     uint64_t mask = (1LL << w_) - 1;
-    size_t z = std::max(1L, long (1 + log2(n) - w_));
-    std::vector<bool> high_bits(m + (1 << z));
+    std::vector<bool> high_bits(m + (n >> w_));
     for (It it = begin; it != end; ++it) {
       uint64_t pos = *it;
       assert(pos < n);
-      low_bits_[j] |= (pos & mask) << offset;
-      offset += w_;
-      if (offset == 64) {
-        offset = 0;
-        ++j;
-      }
-      assert(offset < 64);
-      assert((pos & mask) == low(i));
+      low_arr_.set(i, pos & mask);
 
       uint64_t high = pos >> w_;
       high_bits[high + i] = 1;
@@ -155,23 +144,21 @@ class SparseBitVector {
     high_bits_ = FastBitVector(high_bits);
   }
   int low(size_t i) const {
-    size_t p = i * w_ / 64;
-    size_t o = i * w_ % 64;
-    uint64_t mask = (1LL << w_) - 1;
-    return (low_bits_[p] >> o) & mask;
+    return low_arr_.get(i);
   }
   int w_;
   size_t pop_;
   size_t size_;
-  uint64_t* low_bits_;
+  IntArray low_arr_;
   FastBitVector high_bits_;
+
  public:
   friend void swap(SparseBitVector& a, SparseBitVector& b) {
     using std::swap;
     swap(a.w_, b.w_);
     swap(a.pop_, b.pop_);
     swap(a.size_, b.size_);
-    swap(a.low_bits_, b.low_bits_);
+    swap(a.low_arr_, b.low_arr_);
     swap(a.high_bits_, b.high_bits_);
   }
 };
