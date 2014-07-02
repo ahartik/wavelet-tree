@@ -57,6 +57,7 @@ class SparseBitVector {
 
   size_t rank(size_t pos, bool bit) const {
     if (pos == 0) return 0;
+    if (size_ == 0) return 0;
     uint64_t mask = (1LL << w_) - 1;
     size_t high = pos >> w_;
     size_t low = pos & mask;
@@ -118,6 +119,14 @@ class SparseBitVector {
   template<typename It>
   void init(It begin, It end) {
     size_t m = std::distance(begin, end);
+    if (m == 0) {
+      // special case for empty bitvectors
+      pop_ = 0;
+      w_ = 0;
+      size_ = 0;
+      return;
+    }
+
     pop_ = m;
     It last = end;
     size_t n = 1 + *(--last);
@@ -127,7 +136,6 @@ class SparseBitVector {
     while (w_ < 32 && calc_size(w_, n, m) > calc_size(w_ + 1, n, m)) {
       w_ ++;
     }
-    std::cout << "w = " << w_ << "\n";
     low_arr_ = IntArray(w_, m);
     size_t i = 0;
     uint64_t mask = (1LL << w_) - 1;

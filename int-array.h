@@ -64,6 +64,9 @@ class IntArray {
     lr |= (val << off);
     hr |= (val >> (64 - off));
   }
+  size_t byteSize() const {
+    return vec_.size() * sizeof(uint64_t) + sizeof(*this);
+  }
  private:
   int width_;
   size_t size_;
