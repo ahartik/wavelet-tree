@@ -8,35 +8,10 @@
 #include <cassert>
 #include <stdint.h>
 
+#include "bit-utils.h"
+
 using std::size_t;
 
-// Select for single word.
-//  v: Input value to find position with rank r.
-//  r: bit's desired rank [1-64].
-// Returns: First index i so that r == rank(v,i)
-int FBVInitTables();
-extern uint8_t BytePop[256];
-extern uint8_t ByteSelect[256][8];
-
-
-// Select for single word.
-//  v: Input value to find position with rank r.
-//  r: bit's desired rank [1-64].
-// Returns: First index i so that r == rank(v,i)
-static inline int WordSelect(unsigned long v, int r) {
-  static int init = FBVInitTables();
-  (void) init;
-  for (size_t b = 0; b < sizeof(long); ++b) {
-    int c = BytePop[v&255];
-    if (c >= r) {
-      return b * 8 + ByteSelect[v&255][r-1];
-    }
-    r -= c;
-    v >>= 8;
-  }
-  assert(false);
-  return -1;
-}
 
 class FastBitVector {
   // These two CANNOT be modified.

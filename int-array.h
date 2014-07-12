@@ -58,9 +58,6 @@ class IntArray {
     // set bits to zero before ORing
     lr &= ~(mask << off);
     hr &= ~(mask >> (64 - off));
-    // std::cout << "pos = " << pos << " off = " << off << "\n";
-//     print_bits(lr);
-//     print_bits(hr);
     lr |= (val << off);
     hr |= (val >> (64 - off));
   }
